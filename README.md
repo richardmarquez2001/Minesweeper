@@ -4,7 +4,7 @@ A recreation of minesweeper using JS/JQuery, HTML and CSS.
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See "Installing" notes on how to install the project.
 
 ### Installing
 
@@ -36,6 +36,13 @@ let colNum = 10;
 * First version of the game, added functionality for a single game. 
 * Game can be ran once, reload to restart the game. alert popups indicate whether you won or lost.
 
+## Future Plans
+
+* Adding a flag feature with right click
+* Adding a timer
+* Creating a home page with settings
+* Restyling of entire project
+* Planning to deploy website online, so you don't have to download this project!
 ## Author
 
 * **Richard Marquez** - *Main Author* 
