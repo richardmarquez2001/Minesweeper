@@ -1,7 +1,33 @@
 $(document).ready(function () {
 
-    let rowNum = 20;
-    let colNum = 20;
+    let rowNum = 5;
+    let colNum = 5;
+
+    let bombCount = 0;  //amount of bombs
+    let noneCount = 0;  //amount of empties (the number we are trying to reach)
+    let totalCount = 0;  //the total amount of blocks
+    let currentCount = 0; //the current amount of blocks we clicked on
+
+    // TODO: add right click (flagging) functionality
+    // TODO: create clearBoard, and allow games to be ran multiple times.
+    // TODO: Create a simple starting HTML page with a settings menu that can change the size of the grid
+    
+function clearBoard(){
+ // do something
+}
+
+function showBoard(){
+
+    $('.empty').css("background-color", "#F39237");
+
+    $('.bomb').css({"background-color": "#1C77C3",
+        "background": "url(\"bomb.png\")"
+    });
+
+    $('.adj').css("background-color", "#40BCD8");
+
+}
+
 
 function getRandInt(start, end){
     return (Math.floor(Math.random() * end) + start);
@@ -14,6 +40,7 @@ function getRandInt(start, end){
  * @param j - j coord
  * @returns {number} - the number of adjacent bombs
  */
+
 function checkAround(arr, i, j){
     let count = 0;
     try{
@@ -51,7 +78,6 @@ function checkAround(arr, i, j){
         console.log("Error: " + err)
     }
     return count;
-
 }
 
 //Creates the grid in html
@@ -67,11 +93,16 @@ function getGrid(arr, row, col){
 
             if (arr[i][j] === "X"){  //bomb
                 type = "bomb";
+                bombCount += 1;
             }else if (arr[i][j] === "0") {  //empty
                 type = "empty";
+                noneCount += 1;
             }else{  //adjacent
                 type = "adj";
+                noneCount += 1;
             }
+
+            totalCount += 1;
 
             id = i.toString() + "-" + j.toString();
             str += "<button id= \"" + id + '\"  class = \"' + type + '\"><span> ' +
@@ -123,36 +154,37 @@ function createCSS(row, col, arr){
         let current_i = Number(s.substring(1, s.indexOf("-")));
         let current_j = Number(s.substring(s.indexOf("-") + 1, s.length));
         console.log("-----");
+        console.log("total no. " + totalCount);
         if ( $(s).hasClass("isShown")){
             console.log("reached isShown ");
         }else{
             switch (e.currentTarget.className.toString()){
                 case ("empty"):
                     checkEmpty(arr, current_i, current_j);
+                    console.log("No. trying to reach: " + noneCount);
+                    console.log("No. of Bombs: " + bombCount);
+                    console.log("No. of currently clicked blocks: " + currentCount);
                     break;
                 case("adj"):
                     $(s + " span").show();
                     $(s).css("background-color", "#40BCD8");
+                    $(s).addClass("isShown");
+                    currentCount += 1;
+                    console.log("No. trying to reach: " + noneCount);
+                    console.log("No. of Bombs: " + bombCount);
+                    console.log("No. of currently clicked blocks: " + currentCount);
 
                     break;
                 case("bomb"):
                     $('.bomb').css({"background-color": "#1C77C3",
                         "background": "url(\"bomb.png\")"
                     });
+                    alert("game over");
             }}
 
 
 
     });
-
-    //Keep this code up while you implement algorithm to check adjacent. Afterwards, you can delete this
-    $('.empty').css("background-color", "#F39237");
-
-    $('.bomb').css({"background-color": "#1C77C3",
-        "background": "url(\"bomb.png\")"
-    });
-
-    $('.adj').css("background-color", "#40BCD8");
 
 }
 
@@ -163,52 +195,79 @@ function checkEmpty(arr, i, j){
     let _id = $(s + " span");
 
     if (i < 1){
+
         return;
+
     }
-    else if(id.hasClass("adj")){
-        _id.show();
-        id.css("background-color", "#40BCD8");
-        return;
-    }else if(id.hasClass("empty") === false){
+    else if(i > arr.length){
+
         return;
     }
     else if(j > arr.length){
+
         return;
+
     }
+
     else if(j < 1){
+
         return;
+
     }
-    else if(i > arr.length){
+
+    else if(id.hasClass("isShown")){
+
         return;
-    }else if(id.hasClass("isShown")){
+
+    }
+    else if(id.hasClass("adj")){
+
+        _id.show();
+        id.addClass("isShown");
+        currentCount += 1;
+        id.css("background-color", "#40BCD8");
+
         return;
+
+    }else if(id.hasClass("empty") === false){
+
+        return;
+
+    }
+
+    else{
+
+        currentCount += 1;
+
     }
 
     _id.show();
 
     id.addClass("isShown");
 
-    checkEmpty(arr, i + 1, j);
-    checkEmpty(arr, i + 1, j + 1);
-    checkEmpty(arr, i + 1, j - 1);
+    //bottom
+    checkEmpty(arr, i + 1, j - 1); // bottom-left
+    checkEmpty(arr, i + 1, j); // bottom-middle
+    checkEmpty(arr, i + 1, j + 1); // bottom-right
 
-    checkEmpty(arr, i - 1, j);
-    checkEmpty(arr, i - 1, j + 1);
-    checkEmpty(arr, i - 1, j - 1);
+    // top
+    checkEmpty(arr, i - 1, j - 1); // top-left
+    checkEmpty(arr, i - 1, j); // top-middle
+    checkEmpty(arr, i - 1, j + 1); // top-right
 
-    checkEmpty(arr, i, j + 1);
-    checkEmpty(arr, i - 1, j + 1);
-    checkEmpty(arr, i + 1, j + 1);
+    // left
+    checkEmpty(arr, i + 1, j - 1); // left-down
+    checkEmpty(arr, i, j - 1); // left-middle
+    checkEmpty(arr, i - 1, j - 1); // left-top
 
-    checkEmpty(arr, i, j - 1);
-    checkEmpty(arr, i + 1, j - 1);
-    checkEmpty(arr, i - 1, j - 1);
+    // right
+    checkEmpty(arr, i + 1, j + 1); // right-down
+    checkEmpty(arr, i, j + 1); // right-middle
+    checkEmpty(arr, i - 1, j + 1); // right-top
 
 }
-function createBoard(row, col){
 
-    rowAmount = row;
-    colAmount = col;
+function createBoard(row, col){
 
     let arr = [];
     let arrNum = [];
@@ -250,12 +309,12 @@ function createBoard(row, col){
             }
         }
     }
-    console.log(arr1);
+
     getGrid(arr1, row, col);
     return arr1;
 }
 
-console.log(createBoard(rowNum + 1, colNum + 1));
-
+createBoard(rowNum + 1, colNum + 1);    // starts the game
+showBoard();
 });
 
