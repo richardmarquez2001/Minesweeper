@@ -1,21 +1,34 @@
 $(document).ready(function () {
 
-    let rowNum = 5;
-    let colNum = 5;
+    let rowNum = 10;
+    let colNum = 10;
 
     let bombCount = 0;  //amount of bombs
     let noneCount = 0;  //amount of empties (the number we are trying to reach)
     let totalCount = 0;  //the total amount of blocks
     let currentCount = 0; //the current amount of blocks we clicked on
 
-    // TODO: add right click (flagging) functionality
+    multiplier = 0.08 // number has to be 0 to 1, preferably between 0.00 and 0.10
+
     // TODO: create clearBoard, and allow games to be ran multiple times.
     // TODO: Create a simple starting HTML page with a settings menu that can change the size of the grid
     
 function clearBoard(){
- // do something
+    createBoard(rowNum + 1, colNum + 1);    // starts the game
+    showBoard();
 }
 
+$('#reset').on('click',function(){
+    clearBoard();
+});
+
+$('#back').on('click',function(){
+    // go back to main page
+});
+
+function reset(){
+    alert("worked Pog");
+}
 function showBoard(){
 
     $('.empty').css("background-color", "#F39237");
@@ -44,35 +57,20 @@ function getRandInt(start, end){
 function checkAround(arr, i, j){
     let count = 0;
     try{
-        if(arr[i - 1][j-1] === "X"){
-            count += 1;
-        }
 
-        if(arr[i - 1][j] === "X"){
-            count += 1;
-        }
+        // top row
+        if(arr[i - 1][j-1] === "X"){ count += 1; }
+        if(arr[i - 1][j] === "X"){ count += 1; }
+        if(arr[i - 1][j + 1] === "X"){ count += 1; }
 
-        if(arr[i - 1][j + 1] === "X"){
-            count += 1;
-        }
+        // middle row
+        if(arr[i][j-1] === "X"){ count += 1; }
+        if(arr[i][j + 1] === "X"){ count += 1; }
 
-        if(arr[i][j-1] === "X"){
-            count += 1;
-        }
-
-        if(arr[i][j + 1] === "X"){
-            count += 1;
-        }
-
-        if(arr[i + 1][j-1] === "X"){
-            count += 1;
-        }
-        if(arr[i + 1][j] === "X"){
-            count += 1;
-        }
-        if(arr[i + 1][j + 1] === "X"){
-            count += 1;
-        }
+        // bottom row
+        if(arr[i + 1][j-1] === "X"){ count += 1; }
+        if(arr[i + 1][j] === "X"){ count += 1; }
+        if(arr[i + 1][j + 1] === "X"){ count += 1; }
 
     }catch(err){
         console.log("Error: " + err)
@@ -141,22 +139,20 @@ function createCSS(row, col, arr){
 
             $("#" + id + " span").hide();
 
-            //console.log("id: " + id + " startX: " + startX.toString() + " startY: " + startY.toString());
-
             startX = startX + 50;
         }
 
         startY = startY + 50;
     }
 
-    $('button').click(function(e){
+    // when left click
+    $('button').mousedown(function(e){
+
         let s = "#" + e.currentTarget.id.toString();
         let current_i = Number(s.substring(1, s.indexOf("-")));
         let current_j = Number(s.substring(s.indexOf("-") + 1, s.length));
-        console.log("-----");
-        console.log("total no. " + totalCount);
+
         if ( $(s).hasClass("isShown")){
-            console.log("reached isShown ");
         }else{
             switch (e.currentTarget.className.toString()){
                 case ("empty"):
@@ -180,8 +176,11 @@ function createCSS(row, col, arr){
                         "background": "url(\"bomb.png\")"
                     });
                     alert("game over");
-            }}
-
+                }
+                if (noneCount === currentCount){
+                    alert("you win!");
+                }
+            }
 
 
     });
@@ -194,32 +193,7 @@ function checkEmpty(arr, i, j){
     let id = $(s);
     let _id = $(s + " span");
 
-    if (i < 1){
-
-        return;
-
-    }
-    else if(i > arr.length){
-
-        return;
-    }
-    else if(j > arr.length){
-
-        return;
-
-    }
-
-    else if(j < 1){
-
-        return;
-
-    }
-
-    else if(id.hasClass("isShown")){
-
-        return;
-
-    }
+    if (i < 1 || i > arr.length || j > arr.length || j < 1 || id.hasClass("isShown")){ return; }
     else if(id.hasClass("adj")){
 
         _id.show();
@@ -281,7 +255,7 @@ function createBoard(row, col){
             arr.push("0");
             arrNum.push(getRandInt(0, row));
         }
-        for (let k = 0; k <= Math.floor(arrNum.length * 0.1); k++){
+        for (let k = 0; k <= Math.floor(arrNum.length * multiplier); k++){
             arr[arrNum[k]] = "X";
         }
         arr1.push(arr);
