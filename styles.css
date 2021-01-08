@@ -4,7 +4,31 @@ html{
     font-family: 'Open Sans', sans-serif;
 }
 
-button {
-    font-family : inherit;
-    font-size: 1em;
+.title{
+    width: 50%;
+    margin: 0 auto;
+    padding: 30px;
+}
+.center{
+  width: 50%;
+  margin: 0 auto;
+
+}
+
+.form-center{
+  width: 50%;
+  margin: 0 auto;
+
+}
+.form-label{
+    margin-top: 20px;
+}
+
+.form-section{
+    width: 80%;
+    margin: 0 auto;
+}
+
+#grid{
+    padding: 20px;
 }
